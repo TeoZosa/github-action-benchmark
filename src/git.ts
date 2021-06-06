@@ -64,7 +64,7 @@ function getRemoteUrl(token: string): string {
     return `https://x-access-token:${token}@github.com/${fullName}.git`;
 }
 
-export async function readCommitId(...options: string[]): Promise<string> {
+export async function readCommitIdFromGit(...options: string[]): Promise<string> {
     core.debug(`Executing 'git rev-parse HEAD' with options '${options.join(' ')}'`);
 
     let args = ['rev-parse', 'HEAD'];

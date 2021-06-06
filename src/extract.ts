@@ -140,8 +140,8 @@ function getHumanReadableUnitValue(seconds: number): [number, string] {
 }
 
 async function getCommit(config: Config): Promise<Commit> {
-    if (config.readCommitId) {
-        const id = (await git.readCommitId()).trim();
+    if (config.readCommitIdFromGit) {
+        const id = (await git.readCommitIdFromGit()).trim();
         const repo = github.context.repo;
 
         return {

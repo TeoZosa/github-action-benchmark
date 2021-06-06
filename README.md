@@ -443,7 +443,7 @@ This option is useful if you don't want to put benchmark results in GitHub Pages
 you need to keep the JSON file persistently among job runs. One option is using a workflow cache
 with `actions/cache` action. Please read 'Minimal setup' section above.
 
-#### `read-commit-id` (Optional)
+#### `read-commit-id-from-git` (Optional)
 
 - Type: Boolean
 - Default: `false`
