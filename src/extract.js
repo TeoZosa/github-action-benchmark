@@ -9,6 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const github = __importStar(require("@actions/github"));
+const git = __importStar(require("./git"));
 function getHumanReadableUnitValue(seconds) {
     if (seconds < 1.0e-6) {
         return [seconds * 1e9, 'nsec'];
@@ -23,10 +24,33 @@ function getHumanReadableUnitValue(seconds) {
         return [seconds, 'sec'];
     }
 }
-function getCommit() {
+async function getCommit(config) {
+    if (config.readCommitIdFromGit) {
+        const message = (await git.readCommitMessageFromGit()).trim();
+        const id = (await git.readCommitIdFromGit()).trim();
+        const timestamp = (await git.readCommitTimestampFromGit()).trim();
+        const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/commits/${id}`;
+        const name = (await git.readCommitAuthorFromGit()).trim();
+        const user = {
+            name,
+            username: name,
+        };
+        return {
+            author: user,
+            committer: user,
+            id,
+            message,
+            timestamp,
+            url,
+        };
+    }
     /* eslint-disable @typescript-eslint/camelcase */
     if (github.context.payload.head_commit) {
         return github.context.payload.head_commit;
+    }
+    /* eslint-disable @typescript-eslint/camelcase */
+    if (github.context.payload.workflow_run && github.context.payload.workflow_run.head_commit) {
+        return github.context.payload.workflow_run.head_commit;
     }
     const pr = github.context.payload.pull_request;
     if (!pr) {
@@ -278,7 +302,7 @@ async function extractResult(config) {
     if (benches.length === 0) {
         throw new Error(`No benchmark result was found in ${config.outputFilePath}. Benchmark output was '${output}'`);
     }
-    const commit = getCommit();
+    const commit = await getCommit(config);
     return {
         commit,
         date: Date.now(),

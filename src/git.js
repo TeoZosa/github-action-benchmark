@@ -63,6 +63,42 @@ function getRemoteUrl(token) {
     }
     return `https://x-access-token:${token}@github.com/${fullName}.git`;
 }
+async function readCommitIdFromGit(...options) {
+    core.debug(`Executing 'git rev-parse HEAD' with options '${options.join(' ')}'`);
+    let args = ['rev-parse', 'HEAD'];
+    if (options.length > 0) {
+        args = args.concat(options);
+    }
+    return cmd(...args);
+}
+exports.readCommitIdFromGit = readCommitIdFromGit;
+async function readCommitAuthorFromGit(...options) {
+    core.debug(`Executing 'git show --no-patch --format=%an with options '${options.join(' ')}'`);
+    let args = ['show', '--no-patch', '--format=%an'];
+    if (options.length > 0) {
+        args = args.concat(options);
+    }
+    return cmd(...args);
+}
+exports.readCommitAuthorFromGit = readCommitAuthorFromGit;
+async function readCommitMessageFromGit(...options) {
+    core.debug(`Executing 'git show --no-patch --format=%B with options '${options.join(' ')}'`);
+    let args = ['show', '--no-patch', '--format=%B'];
+    if (options.length > 0) {
+        args = args.concat(options);
+    }
+    return cmd(...args);
+}
+exports.readCommitMessageFromGit = readCommitMessageFromGit;
+async function readCommitTimestampFromGit(...options) {
+    core.debug(`Executing 'git show --no-patch --format=%aI with options '${options.join(' ')}'`);
+    let args = ['show', '--no-patch', '--format=%aI'];
+    if (options.length > 0) {
+        args = args.concat(options);
+    }
+    return cmd(...args);
+}
+exports.readCommitTimestampFromGit = readCommitTimestampFromGit;
 async function push(token, branch, ...options) {
     core.debug(`Executing 'git push' to branch '${branch}' with token and options '${options.join(' ')}'`);
     const remote = getRemoteUrl(token);
